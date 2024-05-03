@@ -6,20 +6,21 @@ import { useDebouncedCallback } from 'use-debounce';
 
 export default function Search({ placeholder }: { placeholder: string }) {
   const searchParams = useSearchParams();
-  
+  const pathname = usePathname();  // Call usePathname at the top level
+  const router = useRouter();      // useRouter should also be called at the top level
+
   const handleSearch = useDebouncedCallback((term) => {
     console.log(`Searching... ${term}`);
-    const pathname = usePathname();
     const params = new URLSearchParams(searchParams);
-    const { replace } = useRouter();
     params.set('page', '1');
     if (term) {
       params.set('query', term);
     } else {
       params.delete('query');
     }
-    replace(`${pathname}?${params.toString()}`);
+    router.replace(`${pathname}?${params.toString()}`);  // Use the pathname and router variables captured via closure
   }, 300);
+
   return (
     <div className="relative flex flex-1 flex-shrink-0">
       <label htmlFor="search" className="sr-only">
